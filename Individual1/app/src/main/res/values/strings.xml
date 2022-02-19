@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Calculator | Penzari Marc P-1841</string>
+    <string name="noDivideBy0">Cannot divide by 0</string>
+</resources>
