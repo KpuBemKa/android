@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,58 +20,63 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        textView = findViewById(R.id.textView);
+        try {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            textView = findViewById(R.id.textView);
 
-        View.OnClickListener numberClickEvent = view -> {
-            String number = ((Button) view).getText().toString();
-            addSymbol(number);
-        };
+            View.OnClickListener numberClickEvent = view -> {
+                String number = ((Button) view).getText().toString();
+                addSymbol(number);
+            };
 
-        View.OnClickListener operationClickEvent = view -> {
-            String operation = ((Button) view).getText().toString();
-            addSymbol(operation);
-        };
+            View.OnClickListener operationClickEvent = view -> {
+                String operation = ((Button) view).getText().toString();
+                addSymbol(operation);
+            };
 
-        findViewById(R.id.button0).setOnClickListener(numberClickEvent);
-        findViewById(R.id.button1).setOnClickListener(numberClickEvent);
-        findViewById(R.id.button2).setOnClickListener(numberClickEvent);
-        findViewById(R.id.button3).setOnClickListener(numberClickEvent);
-        findViewById(R.id.button4).setOnClickListener(numberClickEvent);
-        findViewById(R.id.button5).setOnClickListener(numberClickEvent);
-        findViewById(R.id.button6).setOnClickListener(numberClickEvent);
-        findViewById(R.id.button7).setOnClickListener(numberClickEvent);
-        findViewById(R.id.button8).setOnClickListener(numberClickEvent);
-        findViewById(R.id.button9).setOnClickListener(numberClickEvent);
-        findViewById(R.id.buttonMultiply).setOnClickListener(operationClickEvent);
-        findViewById(R.id.buttonDivide).setOnClickListener(operationClickEvent);
-        findViewById(R.id.buttonAdd).setOnClickListener(operationClickEvent);
-        findViewById(R.id.buttonSubtract).setOnClickListener(operationClickEvent);
-        findViewById(R.id.buttonPoint).setOnClickListener(operationClickEvent);
-        findViewById(R.id.buttonEquals).setOnClickListener(e -> {
-            operations = calculate();
-            textView.setText(operations);
-        });
-        findViewById(R.id.buttonClear).setOnClickListener(e -> {
-            operations = "0";
-            textView.setText(operations);
-        });
-        findViewById(R.id.buttonDelete).setOnClickListener(e -> {
-            if (operations.length() <= 1) {
+            findViewById(R.id.button0).setOnClickListener(numberClickEvent);
+            findViewById(R.id.button1).setOnClickListener(numberClickEvent);
+            findViewById(R.id.button2).setOnClickListener(numberClickEvent);
+            findViewById(R.id.button3).setOnClickListener(numberClickEvent);
+            findViewById(R.id.button4).setOnClickListener(numberClickEvent);
+            findViewById(R.id.button5).setOnClickListener(numberClickEvent);
+            findViewById(R.id.button6).setOnClickListener(numberClickEvent);
+            findViewById(R.id.button7).setOnClickListener(numberClickEvent);
+            findViewById(R.id.button8).setOnClickListener(numberClickEvent);
+            findViewById(R.id.button9).setOnClickListener(numberClickEvent);
+            findViewById(R.id.buttonMultiply).setOnClickListener(operationClickEvent);
+            findViewById(R.id.buttonDivide).setOnClickListener(operationClickEvent);
+            findViewById(R.id.buttonAdd).setOnClickListener(operationClickEvent);
+            findViewById(R.id.buttonSubtract).setOnClickListener(operationClickEvent);
+            findViewById(R.id.buttonPoint).setOnClickListener(operationClickEvent);
+            findViewById(R.id.buttonEquals).setOnClickListener(e -> {
+                operations = calculate();
+                textView.setText(operations);
+            });
+            findViewById(R.id.buttonClear).setOnClickListener(e -> {
                 operations = "0";
                 textView.setText(operations);
-                return;
-            }
+            });
+            findViewById(R.id.buttonDelete).setOnClickListener(e -> {
+                if (operations.length() <= 1) {
+                    operations = "0";
+                    textView.setText(operations);
+                    return;
+                }
 
-            String text = removeLastChars(operations, 1);
-            if (text.charAt(text.length() - 1) == ' ') {
-                text = removeLastChars(text, 1);
-            }
+                String text = removeLastChars(operations, 1);
+                if (text.charAt(text.length() - 1) == ' ') {
+                    text = removeLastChars(text, 1);
+                }
 
-            operations = text;
-            textView.setText(operations);
-        });
+                operations = text;
+                textView.setText(operations);
+            });
+        } catch (Exception ex) {
+            textView.setText("A aparut o eroare: " + ex);
+            operations = "0";
+        }
     }
 
     public void addSymbol(String symbol) {
@@ -81,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if(lastCharacter.equals("0") && operations.length() <= 1)
+        if (lastCharacter.equals("0") && operations.length() <= 1)
             operations = "";
 
         operations += symbol;
@@ -101,45 +108,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     String calculate() {
-        Double result = null;
-        String toCalculate = operations.replaceAll(" ", "");
-        toCalculate = toCalculate.replaceAll(multiplySymbol, "\\*");
-        toCalculate = toCalculate.replaceAll(divideSymbol, "/");
 
-        String[] numbersToConvert = toCalculate.replaceAll("[+\\-/*]", " ").split(" ");
-        ArrayList<Double> numbers = new ArrayList<>();
-        ArrayList<String> operators = new ArrayList<>();
+        try {
+            Double result = null;
+            String toCalculate = operations.replaceAll(" ", "");
+            toCalculate = toCalculate.replaceAll(multiplySymbol, "\\*");
+            toCalculate = toCalculate.replaceAll(divideSymbol, "/");
 
-        // convert numbers
-        for (String n : numbersToConvert) {
-            numbers.add(Double.parseDouble(n));
-        }
+            String[] numbersToConvert = toCalculate.replaceAll("[+\\-/*]", " ").split(" ");
+            ArrayList<Double> numbers = new ArrayList<>();
+            ArrayList<String> operators = new ArrayList<>();
 
-        // convert operators
-        for (int i = 0; i < toCalculate.length(); i++) {
-            String character = Character.toString(toCalculate.charAt(i));
-            switch (character) {
-                case "+":
-                case "-":
-                case "/":
-                case "*":
-                    operators.add(character);
-                    break;
-                default:
-                    break;
+            // convert operators
+            for (int i = 0; i < toCalculate.length(); i++) {
+                String character = Character.toString(toCalculate.charAt(i));
+                switch (character) {
+                    case "+":
+                    case "-":
+                    case "/":
+                    case "*":
+                        operators.add(character);
+                        break;
+                    default:
+                        break;
+                }
             }
+
+            // convert numbers
+            for (String n : numbersToConvert) {
+                numbers.add(Double.parseDouble(n));
+            }
+
+            for (int i = 0; i < operators.size(); i++) {
+                if (result == null)
+                    result = numbers.get(i);
+                if (operators.get(i).equals("/") && numbers.get(i + 1) == 0.0)
+                    return "Cannot divide by 0";
+
+                result = calc(result, numbers.get(i + 1), operators.get(i));
+            }
+
+            return Double.toString(result);
+        } catch (Exception ex) {
+            return "A aparut o eroare";
         }
-
-        for (int i = 0; i < operators.size(); i++) {
-            if (result == null)
-                result = numbers.get(i);
-            if (operators.get(i).equals("/") && numbers.get(i + 1) == 0.0)
-                return "Cannot divide by 0";
-
-            result = calc(result, numbers.get(i + 1), operators.get(i));
-        }
-
-        return Double.toString(result);
     }
 
     double calc(double number1, double number2, String operator) {
